@@ -5,9 +5,9 @@ namespace PlatformService.Data
 {
     public static class PrepDb
     {
-        public static void PrepPopulation(WebApplication host, bool isProduction)
+        public static void PrepPopulation(IApplicationBuilder host, bool isProduction)
         {
-            using (var scoped = host.Services.CreateScope())
+            using (var scoped = host.ApplicationServices.CreateScope())
             {
                 SeedData(scoped.ServiceProvider.GetService<PlatformDbContext>(), isProduction);
             }
