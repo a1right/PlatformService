@@ -12,12 +12,23 @@ namespace PlatformService
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            if (builder.Environment.IsProduction())
+            {
+                Console.WriteLine("--> Using SQLServer Database");
+                builder.Services.AddDbContext<PlatformDbContext>(options =>
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("PlaftormsConn")));
+        }
+            else
+            {
+                Console.WriteLine("--> Using InMemory Database");
+                builder.Services.AddDbContext<PlatformDbContext>(options =>
+                    options.UseInMemoryDatabase("InMemory"));
+            }
+
+    builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            builder.Services.AddDbContext<PlatformDbContext>(options =>
-                options.UseInMemoryDatabase("InMemory"));
             builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
             builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
@@ -37,7 +48,7 @@ namespace PlatformService
 
 
             app.MapControllers();
-            PrepDb.PrepPopulation(app);
+            PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
             app.Run();
         }
