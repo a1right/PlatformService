@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommandsService.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CommandsService
 {
@@ -9,7 +10,7 @@ namespace CommandsService
 
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            this._environment = environment;
+            _environment = environment;
             Configuration = configuration;
         }
 
@@ -36,6 +37,10 @@ namespace CommandsService
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddDbContext<CommandsDbContext>(options =>
+                options.UseInMemoryDatabase("InMemoryDb"));
+            services.AddScoped<ICommandRepository, CommandRepository>();
         }
     }
 }
