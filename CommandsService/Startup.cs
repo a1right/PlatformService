@@ -1,4 +1,7 @@
-﻿using CommandsService.Data;
+﻿using System.ComponentModel.Design;
+using CommandsService.AsyncDataServices;
+using CommandsService.Data;
+using CommandsService.EventProcessing;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommandsService
@@ -41,6 +44,8 @@ namespace CommandsService
             services.AddDbContext<CommandsDbContext>(options =>
                 options.UseInMemoryDatabase("InMemoryDb"));
             services.AddScoped<ICommandRepository, CommandRepository>();
+            services.AddSingleton<IEventProcessor, EventProcessor>();
+            services.AddHostedService<MessageBusSubscriber>();
         }
     }
 }
